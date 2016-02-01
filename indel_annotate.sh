@@ -4,7 +4,7 @@ readonly DEFNTHREADS=1
 readonly SGABIN=/usr/local/bin/sga
 
 if [ $# -eq 0 ] || [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ] \
-    || [ ! -f "$1" ] || [ ! -f "$2" ] || [ -f "$3" ]
+    || [ ! -f "$1" ] || [ ! -f "$2" ] || [! -f "$3" ]
 then
     echo "$0 - performs call annotation of indels based on bam files;"
     echo "     outputs to stdout"
@@ -26,5 +26,5 @@ ${SGABIN} somatic-variant-filters \
     --tumor-bam=$TUMOUR_BAM \
     --normal-bam=$NORMAL_BAM \
     --variant-type=INDEL,COMPLEX \
-    --reference=$REFERENCE 
+    --reference=$REFERENCE \
     ${INPUT_VCF}
