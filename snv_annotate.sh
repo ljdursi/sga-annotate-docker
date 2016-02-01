@@ -23,10 +23,10 @@ readonly REFERENCE=${4-$DEFREF}
 readonly NORMAL_READCOUNTS=${INPUT_VCF/.vcf/.normal.rc}
 readonly TUMOUR_READCOUNTS=${INPUT_VCF/.vcf/.tumour.rc}
 
-/usr/bin/bam-readcount --reference-fasta ${REFERENCE} --site-list <( awk '{ printf "%s\t%d\t%d\n",$1,$2+1,$3+1 }' $INPUT_VCF ) \
+/usr/bin/bam-readcount --reference-fasta ${REFERENCE} --site-list <( zcat ${INPUT_VCF} | awk '{ printf "%s\t%d\t%d\n",$1,$2,$2+1 }' ) \
     --max-count 8000 --max-warnings 0 $NORMAL_BAM > ${NORMAL_READCOUNTS}
 
-/usr/bin/bam-readcount --reference-fasta ${REFERENCE} --site-list <( awk '{ printf "%s\t%d\t%d\n",$1,$2+1,$3+1 }' $INPUT_VCF ) \
+/usr/bin/bam-readcount --reference-fasta ${REFERENCE} --site-list <( zcat ${INPUT_VCF} | awk '{ printf "%s\t%d\t%d\n",$1,$2,$2+1 }' ) \
     --max-count 8000 --max-warnings 0 $TUMOUR_BAM > ${TUMOUR_READCOUNTS}
 
 /usr/local/bin/annotate_from_readcounts.py ${INPUT_VCF} ${NORMAL_READCOUNTS} ${TUMOUR_READCOUNTS}

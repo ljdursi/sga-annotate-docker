@@ -20,7 +20,7 @@
 #
 FROM ubuntu:14.04
 MAINTAINER Jonathan Dursi <Jonathan.Dursi@oicr.on.ca> 
-LABEL Description="Runs SGA variant annotation on candidate indels against tumour and normal bams" Vendor="OICR" Version="0.1"
+LABEL Description="Runs bam-based annotation on candidate SNV, indel calls" Vendor="OICR" Version="0.1"
 
 VOLUME /data
 WORKDIR /data
