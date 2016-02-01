@@ -4,7 +4,7 @@ readonly DEFNTHREADS=1
 readonly READCOUNTSBIN=/usr/bin/bam-readcounts
 
 if [ $# -eq 0 ] || [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ] \
-    || [ ! -f "$1" ] || [ ! -f "$2" ] || [! -f "$3" ]
+    || [ ! -f "$1" ] || [ ! -f "$2" ] || [ ! -f "$3" ]
 then
     echo "$0 - performs call annotation of SNVs based on bam files;"
     echo "     outputs to stdout"
