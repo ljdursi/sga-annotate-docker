@@ -36,6 +36,7 @@ RUN apt-get update && \
         libhts-dev \
         libhts0 \
         libjemalloc-dev \
+        libncurses5-dev \
         libsparsehash-dev \
         libz-dev \
         python \
@@ -49,7 +50,7 @@ RUN mkdir -p /deps && \
     cd /deps && \
     wget https://github.com/pezmaster31/bamtools/archive/v2.4.0.tar.gz && \
     tar -xzvf v2.4.0.tar.gz && \
-    rm -xzvf v2.4.0.tar.gz && \
+    rm -rf v2.4.0.tar.gz && \
     cd bamtools-2.4.0 && \
     mkdir build && \
     cd build && \
@@ -86,7 +87,7 @@ RUN mkdir -p /deps && \
     cd /deps & \
     git clone --recursive git://github.com/ekg/vcflib.git && \
     cd vcflib && \
-    git checkout d453d91592fe8a74d92b49cd6c7cd73f79a8b70b \
+    git checkout d453d91592fe8a74d92b49cd6c7cd73f79a8b70b && \
     make 
 
 # get pancan standard reference
@@ -111,6 +112,7 @@ RUN mkdir -p /src && \
 # Put wrapper script in /usr/local/bin
 COPY indel_annotate.sh /usr/local/bin
 COPY snv_annotate.sh /usr/local/bin
+COPY annotate_from_readcounts.py /usr/local/bin
 
 ENTRYPOINT ["/usr/local/bin/indel_annotate.sh"]
 CMD ["--help"]
