@@ -19,6 +19,16 @@ readonly TUMOUR_BAM=$3
 readonly NTHREADS=${4-$DEFNTHREADS}
 readonly REFERENCE=${5-$DEFREF}
 
+if [ ! -f ${NORMAL_BAM}.bai ] 
+then
+    /usr/local/bin/samtools index ${NORMAL_BAM}
+fi
+
+if [ ! -f ${TUMOUR_BAM}.bai ] 
+then
+    /usr/local/bin/samtools index ${TUMOUR_BAM}
+fi
+
 # todo - use vcfbreakmulti to 
 ${SGABIN} somatic-variant-filters \
     --annotate-only \

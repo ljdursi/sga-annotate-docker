@@ -40,6 +40,8 @@ RUN apt-get update && \
         libsparsehash-dev \
         libz-dev \
         python \
+        python-dev \
+        python-pip \
         tabix \
         wget \
         zlib1g-dev 
@@ -108,6 +110,10 @@ RUN mkdir -p /src && \
     ./configure --with-bamtools=/deps/bamtools-2.4.0 --with-jemalloc=/usr --prefix=/usr/local && \
     make && \
     make install
+
+# get pyvcf for wrappers
+RUN pip install --upgrade pip && \
+    pip install pyvcf
 
 # Put wrapper script in /usr/local/bin
 COPY indel_annotate.sh /usr/local/bin
