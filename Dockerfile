@@ -49,11 +49,25 @@ RUN mkdir -p /deps && \
     cd /deps && \
     wget https://github.com/pezmaster31/bamtools/archive/v2.4.0.tar.gz && \
     tar -xzvf v2.4.0.tar.gz && \
+    rm -xzvf v2.4.0.tar.gz && \
     cd bamtools-2.4.0 && \
     mkdir build && \
     cd build && \
     cmake .. && \
     make
+
+# bam-readcount: for SNV annotation
+RUN mkdir -p /deps && \
+    cd /deps && \
+    wget https://github.com/genome/bam-readcount/archive/v0.7.4.tar.gz && \
+    tar -xzvf v0.7.4.tar.gz && \
+    rm v0.7.4.tar.gz && \
+    cd bam-readcount-0.7.4 && \
+    mkdir build && \
+    cd build && \
+    cmake .. && \
+    make && \
+    make install
 
 # samtools - for indexing reference, etc
 RUN mkdir -p /deps && \
@@ -65,6 +79,15 @@ RUN mkdir -p /deps && \
     make prefix=/usr/local/ install && \
     cd .. && \
     rm -rf samtools-1.3
+
+# vcflib - for tools like vcfbreakmulti
+# set a fixed version for reproducibility
+RUN mkdir -p /deps && \
+    cd /deps & \
+    git clone --recursive git://github.com/ekg/vcflib.git && \
+    cd vcflib && \
+    git checkout d453d91592fe8a74d92b49cd6c7cd73f79a8b70b \
+    make 
 
 # get pancan standard reference
 RUN mkdir -p /reference && \
@@ -86,7 +109,8 @@ RUN mkdir -p /src && \
     make install
 
 # Put wrapper script in /usr/local/bin
-COPY sga_annotate.sh /usr/local/bin
+COPY indel_annotate.sh /usr/local/bin
+COPY snv_annotate.sh /usr/local/bin
 
-ENTRYPOINT ["/usr/local/bin/sga_annotate.sh"]
+ENTRYPOINT ["/usr/local/bin/indel_annotate.sh"]
 CMD ["--help"]
