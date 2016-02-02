@@ -113,8 +113,6 @@ class ReadCountEntry(object):
             self.__totdepth = 0
         else:
             fields = line_string.split()
-            if fields[0][0] != 'c':
-                fields[0] = 'chr'+fields[0]
             self.__chrom = fields[0]
             self.__pos = int(fields[1])
             self.__ref = fields[2]
