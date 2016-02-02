@@ -44,7 +44,7 @@ readonly TUMOUR_READCOUNTS=${VCF_STRIPGZ/.vcf/.tumour.rc}
     --site-list <( zcat ${INPUT_VCF} | /deps/vcflib/bin/vcfbreakmulti | awk '$1 !~ /^#/{ printf "%s\t%d\t%d\n",$1,$2,$2+1 }' ) \
     --max-count 8000 $TUMOUR_BAM > ${TUMOUR_READCOUNTS} 2> /dev/null
 
-/usr/local/bin/annotate_from_readcounts.py ${INPUT_VCF} ${NORMAL_READCOUNTS} ${TUMOUR_READCOUNTS}
+/usr/local/bin/annotate_from_readcounts.py <( zcat ${INPUT_VCF} | /deps/vcflib/bin/vcfbreakmulti ) ${NORMAL_READCOUNTS} ${TUMOUR_READCOUNTS}
 
 # delete intermediate files
 #rm ${NORMAL_READCOUNTS}
