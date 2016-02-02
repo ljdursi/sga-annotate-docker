@@ -111,14 +111,14 @@ RUN mkdir -p /src && \
     make && \
     make install
 
-# get pyvcf for wrappers
+# get pyvcf for annotate_from_readcounts.py
 RUN pip install --upgrade pip && \
     pip install pyvcf
 
 # Put wrapper script in /usr/local/bin
 COPY indel_annotate.sh /usr/local/bin
 COPY snv_annotate.sh /usr/local/bin
+COPY annotate.sh /usr/local/bin
 COPY annotate_from_readcounts.py /usr/local/bin
 
-ENTRYPOINT ["/usr/local/bin/indel_annotate.sh"]
-CMD ["--help"]
+ENTRYPOINT ["/usr/local/bin/annotate.sh"]
