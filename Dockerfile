@@ -74,7 +74,7 @@ RUN mkdir -p /deps && \
 
 # samtools - for indexing reference, etc
 RUN mkdir -p /deps && \
-    cd /deps & \
+    cd /deps && \
     wget https://github.com/samtools/samtools/releases/download/1.3/samtools-1.3.tar.bz2 && \
     tar -xjvf samtools-1.3.tar.bz2 && \
     rm samtools-1.3.tar.bz2 && \
@@ -86,7 +86,7 @@ RUN mkdir -p /deps && \
 # vcflib - for tools like vcfbreakmulti
 # set a fixed version for reproducibility
 RUN mkdir -p /deps && \
-    cd /deps & \
+    cd /deps && \
     git clone --recursive git://github.com/ekg/vcflib.git && \
     cd vcflib && \
     git checkout d453d91592fe8a74d92b49cd6c7cd73f79a8b70b && \

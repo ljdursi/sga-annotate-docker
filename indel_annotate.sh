@@ -36,4 +36,4 @@ ${SGABIN} somatic-variant-filters \
     --tumor-bam=$TUMOUR_BAM \
     --normal-bam=$NORMAL_BAM \
     --reference=$REFERENCE \
-    ${INPUT_VCF}
+    <( zcat ${INPUT_VCF} | /deps/vcflib/bin/vcfbreakmulti )

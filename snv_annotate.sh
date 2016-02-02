@@ -31,15 +31,21 @@ fi
 
 # output readcounts from input vcf
 
-readonly NORMAL_READCOUNTS=${INPUT_VCF/.vcf/.normal.rc}
-readonly TUMOUR_READCOUNTS=${INPUT_VCF/.vcf/.tumour.rc}
+readonly VCF_STRIPGZ=${INPUT_VCF/.gz/}
+
+readonly NORMAL_READCOUNTS=${VCF_STRIPGZ/.vcf/.normal.rc}
+readonly TUMOUR_READCOUNTS=${VCF_STRIPGZ/.vcf/.tumour.rc}
 
 /usr/bin/bam-readcount --reference-fasta ${REFERENCE} \
-    --site-list <( zcat ${INPUT_VCF} | awk '$1 !~ /^#/{ printf "%s\t%d\t%d\n",$1,$2,$2+1 }' ) \
+    --site-list <( zcat ${INPUT_VCF} | /deps/vcflib/bin/vcfbreakmulti | awk '$1 !~ /^#/{ printf "%s\t%d\t%d\n",$1,$2,$2+1 }' ) \
     --max-count 8000 $NORMAL_BAM > ${NORMAL_READCOUNTS} 2> /dev/null
 
 /usr/bin/bam-readcount --reference-fasta ${REFERENCE} \
-    --site-list <( zcat ${INPUT_VCF} | awk '$1 !~ /^#/{ printf "%s\t%d\t%d\n",$1,$2,$2+1 }' ) \
+    --site-list <( zcat ${INPUT_VCF} | /deps/vcflib/bin/vcfbreakmulti | awk '$1 !~ /^#/{ printf "%s\t%d\t%d\n",$1,$2,$2+1 }' ) \
     --max-count 8000 $TUMOUR_BAM > ${TUMOUR_READCOUNTS} 2> /dev/null
 
 /usr/local/bin/annotate_from_readcounts.py ${INPUT_VCF} ${NORMAL_READCOUNTS} ${TUMOUR_READCOUNTS}
+
+# delete intermediate files
+#rm ${NORMAL_READCOUNTS}
+#rm ${TUMOUR_READCOUNTS}
