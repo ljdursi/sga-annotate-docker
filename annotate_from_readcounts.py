@@ -9,8 +9,8 @@ import sys
 
 def main():
     """
-    Driver program - Read in a VCF file and normal/tumour read counts for each base at each position,
-    and output read counts at each call
+    Driver program - Read in a VCF file and normal/tumour read counts
+    for each base at each position, and output read counts at each call
     """
     parser = argparse.ArgumentParser(description='Validate somatic calls against bamcounts of normal/tumor BAMs')
     parser.add_argument('vcffile', help='Name of vcf file to validate')
@@ -23,15 +23,18 @@ def main():
     normal_rc = BamReadcountFile(args.normal_bamcounts)
     tumour_rc = BamReadcountFile(args.tumour_bamcounts)
 
-    vcf_reader = vcf.Reader(open(args.vcffile,'r'))
+    vcf_reader = vcf.Reader(open(args.vcffile, 'r'))
     vcf_writer = vcf.Writer(args.output, vcf_reader)
 
     for record in vcf_reader:
         chrom, pos, alt = record.CHROM, record.POS, str(record.ALT[0])
-        record.INFO['NormalReads'] = [ normal_rc.reads(chrom, pos, alt) ]
+        record.INFO['NormalReads'] = [normal_rc.reads(chrom, pos, alt)]
         record.INFO['NormalEvidenceReads'] = list(normal_rc.evidence_reads(chrom, pos, alt))
-        record.INFO['TumourReads'] = [ tumour_rc.reads(chrom, pos, alt) ]
+        record.INFO['TumourReads'] = [tumour_rc.reads(chrom, pos, alt)]
         record.INFO['TumourEvidenceReads'] = list(tumour_rc.evidence_reads(chrom, pos, alt))
+        record.INFO['TumourAvgVarMapQ'] = [tumour_rc.map_qual(chrom, pos, alt)]
+        record.INFO['TumourAvgVarBaseQ'] = [tumour_rc.base_qual(chrom, pos, alt)]
+        record.INFO['TumourAvgVarPosn'] = [tumour_rc.avg_frac_position(chrom, pos, alt)]
 
         vcf_writer.write_record(record)
 
@@ -78,8 +81,7 @@ class BamReadcountFile(object):
 
     def dp8_str(self, chrom, pos=None):
         " Returns the 8-depth (ACGT forward, ACGT reverse) at this position "
-        chrom_pos = self.chrom_pos_tuple(chrom, pos)
-        return ''.join( [ str(x) for x in self.dp8 ] )
+        return ''.join([str(x) for x in self.dp8(chrom, pos)])
 
     def evidence_reads(self, chrom, pos, alt):
         """
@@ -92,10 +94,31 @@ class BamReadcountFile(object):
 
     def reads(self, chrom, pos, alt):
         """
-        Minimum number of reads covering chrom,pos:pos+len(alt) 
+        Minimum number of reads covering chrom,pos:pos+len(alt)
         """
         nreads = [self.depth(chrom, p) for p in range(pos, pos+len(alt))]
         return min(nreads)
+
+    def map_qual(self, chrom, pos, alt):
+        " Returns avg map qual for this allele at this posn "
+        chrom_pos = self.chrom_pos_tuple(chrom, pos)
+        if not chrom_pos in self.__entries:
+            return None
+        return self.__entries[chrom_pos].map_qual(alt)
+
+    def base_qual(self, chrom, pos, alt):
+        " Returns avg base qual for this allele at this posn "
+        chrom_pos = self.chrom_pos_tuple(chrom, pos)
+        if not chrom_pos in self.__entries:
+            return None
+        return self.__entries[chrom_pos].base_qual(alt)
+
+    def avg_frac_position(self, chrom, pos, alt):
+        " Returns avg read position for this allele at this posn "
+        chrom_pos = self.chrom_pos_tuple(chrom, pos)
+        if not chrom_pos in self.__entries:
+            return None
+        return self.__entries[chrom_pos].avg_frac_position(alt)
 
 
 class ReadCountEntry(object):
@@ -126,7 +149,7 @@ class ReadCountEntry(object):
 
     def __contains__(self, base):
         " Do we have data for base at this position? "
-        return base in self.__depths[base]
+        return base in self.__depths
 
     @property
     def depth(self):
@@ -146,15 +169,30 @@ class ReadCountEntry(object):
     @property
     def dp8(self):
         " Returns the pair depth for a base at the current item "
-        forwards = [ self.__depths[x].depth_pair[0] for x in ['A','C','G','T'] ]
-        reverses = [ self.__depths[x].depth_pair[1] for x in ['A','C','G','T'] ]
-        return tuple( forwards + reverses )
+        forwards = [self.__depths[x].depth_pair[0] for x in ['A', 'C', 'G', 'T']]
+        reverses = [self.__depths[x].depth_pair[1] for x in ['A', 'C', 'G', 'T']]
+        return tuple(forwards + reverses)
 
     @property
     def dp8_str(self):
         " Returns the pair depth for a base at the current item "
         counts = self.dp8
-        return ','.join( [str(x) for x in counts] )
+        return ','.join([str(x) for x in counts])
+
+    def map_qual(self, base):
+        if not base in self.__depths:
+            return None
+        return self.__depths[base].map_qual
+
+    def base_qual(self, base):
+        if not base in self.__depths:
+            return None
+        return self.__depths[base].base_qual
+
+    def avg_frac_position(self, base):
+        if not base in self.__depths:
+            return None
+        return self.__depths[base].avg_frac_position
 
 class BaseDepth(object):
     """
@@ -189,18 +227,25 @@ class BaseDepth(object):
 
     @property
     def map_qual(self):
-        " Returns the average map quality for reads supporting this base at this position"
+        """
+        Returns the average map quality for reads supporting this base
+        at this position
+        """
         return self.__avg_map_qual
 
     @property
     def base_qual(self):
-        " Returns the average base quality across reads with this base at this position"
+        """
+        Returns the average base quality across reads with this base
+        at this position
+        """
         return self.__avg_base_qual
 
     @property
     def avg_frac_position(self):
         """
-        Returns the average fractional position for this location across reads which support this base at this position
+        Returns the average fractional position for this location across reads
+        which support this base at this position
         """
         return self.__avg_position
 
