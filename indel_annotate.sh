@@ -36,4 +36,4 @@ ${SGABIN} somatic-variant-filters \
     --tumor-bam=$TUMOUR_BAM \
     --normal-bam=$NORMAL_BAM \
     --reference=$REFERENCE \
-    <( zcat ${INPUT_VCF} | /deps/vcflib/bin/vcfbreakmulti )
+    <( zcat ${INPUT_VCF} | /deps/vcflib/bin/vcfbreakmulti | grep -v "^##.*=$" ) 
