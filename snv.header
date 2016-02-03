@@ -1,0 +1,7 @@
+##INFO=<ID=TumourAvgVarBaseQ,Number=1,Type=Float,Description="Average base quality of variant allele in tumour sample, if present">
+##INFO=<ID=TumourAvgVarMapQ,Number=1,Type=Float,Description="Average map quality of reaeds showing variant allele in tumour sample, if present">
+##INFO=<ID=TumourAvgVarPosn,Number=1,Type=Float,Description="Average fractional position of variant allele in tumour reads, if present">
+##INFO=<ID=TumourReads,Number=1,Type=Integer,Description="Depth in tumour sample">
+##INFO=<ID=TumourEvidenceReads,Number=2,Type=Integer,Description="Number of evidence reads by strand">
+##INFO=<ID=NormalReads,Number=1,Type=Integer,Description="Depth in tumour sample">
+##INFO=<ID=NormalEvidenceReads,Number=2,Type=Integer,Description="Number of evidence reads by strand">

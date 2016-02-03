@@ -19,6 +19,17 @@ readonly TUMOUR_BAM=$3
 readonly NTHREADS=${4-$DEFNTHREADS}
 readonly REFERENCE=${5-$DEFREF}
 
+# clean input vcf by breaking multiallelic calls, 
+# and getting rid of a sanger header line that kills sga (ends in "=")
+readonly BASE=$( basename ${INPUT_VCF} )
+readonly VCFBASE=${BASE%.*}
+readonly CLEAN_VCF=/tmp/clean_${VCFBASE}.vcf
+zcat $INPUT_VCF \
+    | /deps/vcflib/bin/vcfbreakmulti \
+    | grep -v "^##.*=$" \
+    > ${CLEAN_VCF}
+
+# index BAM files if necessary
 if [ ! -f ${NORMAL_BAM}.bai ] 
 then
     /usr/local/bin/samtools index ${NORMAL_BAM}
@@ -29,11 +40,26 @@ then
     /usr/local/bin/samtools index ${TUMOUR_BAM}
 fi
 
-# todo - use vcfbreakmulti to 
+# intermediate file, containing the output calls
+# but not containing all needed new header lines
+readonly BEFORE_REHEADERING_VCF=/tmp/before_headers_${VCFBASE}.vcf
+
 ${SGABIN} somatic-variant-filters \
     --annotate-only \
     --threads=$NTHREADS \
     --tumor-bam=$TUMOUR_BAM \
     --normal-bam=$NORMAL_BAM \
     --reference=$REFERENCE \
-    <( zcat ${INPUT_VCF} | /deps/vcflib/bin/vcfbreakmulti | grep -v "^##.*=$" ) 
+    $CLEAN_VCF > $BEFORE_REHEADERING_VCF
+
+# output up to the start of the INFO lines
+sed -n -e '1,/^##INFO/p' ${BEFORE_REHEADERING_VCF} | head -n -1
+# output new header lines
+cat /usr/local/share/indel.header
+# output calls
+sed -n -e '/^##INFO/,$p' ${BEFORE_REHEADERING_VCF}
+
+# clean up temporary files
+
+rm -f $CLEAN_VCF
+rm -f $BEFORE_REHEADERING_VCF

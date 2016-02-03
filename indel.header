@@ -1,0 +1,10 @@
+##INFO=<ID=TumorVAF,Number=1,Type=Float,Description="SGA-derived variant allele frequency in tumour">
+##INFO=<ID=NormalVAF,Number=1,Type=Float,Description="SGA-derived variant allele frequency in control">
+##INFO=<ID=TumorVarDepth,Number=1,Type=Integer,Description="SGA-derived variant depth in tumour">
+##INFO=<ID=TumorTotalDepth,Number=1,Type=Integer,Description="SGA-derived total depth in tumour">
+##INFO=<ID=NormalVarDepth,Number=1,Type=Integer,Description="SGA-derived variant depth in control">
+##INFO=<ID=NormalTotalDepth,Number=1,Type=Integer,Description="SGA-derived total depth in control">
+##INFO=<ID=5pContext,Number=1,Type=String,Description="5- trinucleotide context">
+##INFO=<ID=3pContext,Number=1,Type=String,Description="3- trinucleotide context">
+##INFO=<ID=RepeatUnit,Number=1,Type=String,Description="Repeat Unit">
+##INFO=<ID=RepeatRefCount,Number=1,Type=Integer,Description="Reference repeat count">

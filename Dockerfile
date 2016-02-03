@@ -115,7 +115,11 @@ RUN mkdir -p /src && \
 RUN pip install --upgrade pip && \
     pip install pyvcf
 
-# Put wrapper script in /usr/local/bin
+# Put auxilliary data in /usr/local/share
+COPY indel.header /usr/local/share
+COPY snv.header /usr/local/share
+
+# Put scripts in /usr/local/bin
 COPY indel_annotate.sh /usr/local/bin
 COPY snv_annotate.sh /usr/local/bin
 COPY annotate.sh /usr/local/bin
