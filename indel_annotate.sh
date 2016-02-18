@@ -53,11 +53,11 @@ ${SGABIN} somatic-variant-filters \
     $CLEAN_VCF > $BEFORE_REHEADERING_VCF
 
 # output up to the start of the INFO lines
-sed -n -e '1,/^##INFO/p' ${BEFORE_REHEADERING_VCF} | head -n -1
+sed -n -e '1,/^#CHROM/p' ${BEFORE_REHEADERING_VCF} | head -n -1
 # output new header lines
 cat /usr/local/share/indel.header
 # output calls
-sed -n -e '/^##INFO/,$p' ${BEFORE_REHEADERING_VCF}
+sed -n -e '/^#CHROM/,$p' ${BEFORE_REHEADERING_VCF}
 
 # clean up temporary files
 
