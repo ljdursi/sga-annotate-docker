@@ -1,25 +1,22 @@
 {
-  "variant_type": {
-    "class": "enum",
-    "symbol": "indel"
-  },
+  "variant_type":"SNV",
 
-  "#input_vcf": {
+  "input_vcf": {
     "class": "File",
     "path": "../data/f8f7f274-dd98-3bb0-e040-11ac0c483fcd.dkfz-snvCalling_1-0-132-1-hpc.1602051320.somatic.snv_mnv.pass-filtered.oxoG.vcf.gz"
   },
 
-  "#normal_bam": {
+  "normal_bam": {
     "class": "File",
     "path": "../data/a79828259eafa5c5eb8f97a4dcd49270_minibam.bam"
   },
 
-  "#tumour_bam": {
+  "tumour_bam": {
     "class": "File",
     "path": "../data/e90b9d799ff214dbfa3dadef7d74ed54_minibam.bam"
   },
 
-  "#output": {
+  "output": {
     "class": "File",
     "path": "../f8f7f274-dd98-3bb0-e040-11ac0c483fcd_annotated_dkfz_snv.vcf"
   }
