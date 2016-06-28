@@ -35,10 +35,9 @@ requirements:
 
 inputs:
   - id: "#variant_type"
-    type: enum
-    symbols: ["SNV", "indel"]
+    type: string
     default: "SNV"
-    description: "Annotate SNV or indel variants"
+    description: "Annotate SNV (SNV) or indel (indel) variants"
     inputBinding:
       position: 1
 
@@ -52,19 +51,21 @@ inputs:
   - id: "#normal_bam"
     type: File
     description: "The normal BAM file"
+    secondaryFiles: ".bai"
     format: "http://edamontology.org/format_2572"
     inputBinding:
       position: 3
 
   - id: "#tumour_bam"
     type: File
+    secondaryFiles: ".bai"
     description: "The tumour BAM file"
     format: "http://edamontology.org/format_2572"
     inputBinding:
       position: 4
 
-   -id: "#output"
-    tyepe: string
+  - id: "#output"
+    type: string
 
 stdout: $(inputs.output)
 
@@ -77,4 +78,4 @@ outputs:
       glob: $(inputs.output)
     description: "A zip file that contains the HTML report and various graphics."
 
-baseCommand: ["annotate.sh"]
+baseCommand: []
